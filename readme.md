@@ -47,7 +47,7 @@ az vmss create --resource-group $resource_group --name $vmss_name \
 
 ## Deploy nginx to the Virtual Machine Scale Set
 
-A Storage Account is needed to store the init scripts. Note that '-' is not allowed in a storage account name.  Additional nameing rules for storage can be found [here](https://docs.microsoft.com/en-us/azure/architecture/best-practices/naming-conventions#storage)
+A Storage Account is needed to store the init scripts. Note that '-' is not allowed in a storage account name.  Additional naming rules for storage can be found [here](https://docs.microsoft.com/en-us/azure/architecture/best-practices/naming-conventions#storage)
 
 Create the Azure Storage Account and container that will store the scripts used to deploy the application
 
@@ -232,7 +232,7 @@ Map the localhost:8080 endpoint to the remote 80 port through the SSH channel
 ssh -L localhost:8080:localhost:80 -p $ssh_port $lb_ip
 ```
 
-After the SSH channel, you can visit the web page through http://localhost:8080 to see the upgraded instance
+After creating the SSH channel, you can visit the web page through http://localhost:8080 to see the upgraded instance
 
 Close the SSH channel and upgrade the remaining instances
 
