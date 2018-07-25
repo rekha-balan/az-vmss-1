@@ -1,4 +1,4 @@
-# Azure Virtual Machine Scale Set (VMSS) Demo
+# Azure Virtual Machine Scale Set (vmss) Demo
 
 Content based on
 Tutorial: Canary Deployment for Azure Virtual Machine Scale Sets
@@ -80,9 +80,7 @@ az storage blob upload --container-name init --file install_nginx.sh --name inst
 init_script_url="$(az storage blob url --container-name init --name install_nginx.sh --output tsv)"
 ```
 
-## Deploy the VMSS Custom Script Extension
-
-Create the JSON settings file used by the VMSS extension
+Create the JSON settings file used by the vmss extension
 
 ```bash
 cat <<EOF >script-config.json
@@ -105,7 +103,7 @@ az vmss extension set \
     --settings @script-config.json
 ```
 
-The vmss is now ready to run the script defined in the custom script extension.
+The script is staged, and the vmss is now ready to run the script defined in the custom script extension.
 
 Show the current status of the vmss
 
@@ -121,7 +119,7 @@ az vmss update-instances --resource-group $resource_group --name $vmss_name --in
 
 Each instance will get run the script and deploy nginx
 
-## Enable Public Access to the VMSS Instances
+## Enable Public Access to the vmss Instances
 
 Create a load balancer probe and rule to allow public access to the backend nginx instances
 
@@ -152,7 +150,7 @@ lb_ip=$(az network lb show --resource-group "$resource_group" --name "${vmss_nam
 curl -s "$lb_ip" | grep title
 ```
 
-## Initiate a Rolling Update to the VMSS
+## Initiate a Rolling Update to the vmss
 
 Create the new init script that will be used to modify nginx, upload the script to the Storage Account
 
@@ -162,14 +160,14 @@ cat <<EOF >install_nginx_v2.sh
 
 sudo apt-get update
 sudo apt-get install -y nginx
-sudo sed -i -e 's/Welcome to nginx/Welcome to nginx on Azure VMSS/' /var/www/html/index*.html
+sudo sed -i -e 's/Welcome to nginx/Welcome to nginx on Azure vmss/' /var/www/html/index*.html
 EOF
 
 az storage blob upload --container-name init --file install_nginx_v2.sh --name install_nginx_v2.sh
 init_script_url="$(az storage blob url --container-name init --name install_nginx_v2.sh --output tsv)"
 ```
 
-Create the JSON settings file used by the new VMSS extension
+Create the JSON settings file used by the new vmss extension
 
 ```bash
 cat <<EOF >script-config_v2.json
@@ -239,5 +237,5 @@ After the SSH channel, you can visit the web page through http://localhost:8080 
 Close the SSH channel and upgrade the remaining instances
 
 ```bash
-az vmss update-instances --resource-group "$resource_group" --name "$vmss_name" --instance-ids \*
+az vmss update-instances --resource-group $resource_group --name $vmss_name --instance-ids \*
 ```
