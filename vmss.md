@@ -10,11 +10,11 @@ https://open.microsoft.com/2018/06/18/tutorial-canary-deployment-for-azure-virtu
 Define the deployment variables used by the subsequent Azure CLI commands
 
 ```bash
-resource_group=vmss-demo-02
+resource_group=vmss-demo-01
 location=westus2
 vmss_name=vmss-nginx-01
 user_name=bot6
-storage_account=vmssnginx2storage
+storage_account=vmssnginx01storage
 ```
 
 Define the admin user name and SSH key variables
@@ -234,7 +234,7 @@ Map the localhost:8080 endpoint to the remote 80 port through the SSH channel
 ssh -L localhost:8080:localhost:80 -p $ssh_port $lb_ip
 ```
 
-After this, you can visit the web page through http://localhost:8080 and it will show you the page served by the updated instance
+After the SSH channel, you can visit the web page through http://localhost:8080 to see the upgraded instance
 
 Close the SSH channel and upgrade the remaining instances
 
