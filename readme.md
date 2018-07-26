@@ -129,7 +129,7 @@ Create a load balancer probe and rule to allow public access to the backend ngin
 az network lb probe create \
     --resource-group $resource_group \
     --lb-name ${vmss_name}-elb \
-    --name nginx \
+    --name nginx-probe \
     --port 80 \
     --protocol Http \
     --path /
@@ -137,12 +137,12 @@ az network lb probe create \
 az network lb rule create \
     --resource-group $resource_group \
     --lb-name ${vmss_name}-elb \
-    --name nginx \
+    --name nginx-rule \
     --frontend-port 80 \
     --backend-port 80 \
     --protocol Tcp \
     --backend-pool-name ${vmss_name}-backend \
-    --probe nginx
+    --probe nginx-probe
 ```
 
 Verify nginx is running on each instance
