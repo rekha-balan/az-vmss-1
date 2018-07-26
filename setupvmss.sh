@@ -181,7 +181,7 @@ echo
 echo 'az network lb probe create \'
 echo '    --resource-group $resource_group \'
 echo '    --lb-name ${vmss_name}-elb \'
-echo '    --name nginx \'
+echo '    --name nginx-probe \'
 echo '    --port 80 \'
 echo '    --protocol Http \'
 echo '    --path /'
@@ -213,12 +213,12 @@ read -n1 -r -p 'Press any key...' key
 az network lb rule create \
     --resource-group $resource_group \
     --lb-name ${vmss_name}-elb \
-    --name nginx \
+    --name nginx-rule \
     --frontend-port 80 \
     --backend-port 80 \
     --protocol Tcp \
     --backend-pool-name ${vmss_name}-backend \
-    --probe nginx
+    --probe nginx-probe
 
 echo
 echo
