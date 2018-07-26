@@ -231,7 +231,7 @@ ssh_port="$(az network lb inbound-nat-rule show --resource-group $resource_group
 Map the localhost:8080 endpoint to the remote 80 port through the SSH channel
 
 ```bash
-ssh -L localhost:8080:localhost:80 -p $ssh_port $lb_ip
+ssh -L localhost:8080:localhost:80 -p $ssh_port $user_name@$lb_ip
 ```
 
 After creating the SSH channel, you can visit the web page through http://localhost:8080 to see the upgraded instance
