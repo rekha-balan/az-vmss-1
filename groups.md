@@ -14,7 +14,7 @@ vmssdemo17storage  - vmssdemo24storage
 japaneast
 
 vmss-demo-25 - vmss-demo-32
-vmssdemo17storage  - vmssdemo24storage
+vmssdemo25storage  - vmssdemo25storage
 canadaeast
 
 user_name=[your login name]
