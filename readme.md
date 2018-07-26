@@ -10,11 +10,11 @@ https://open.microsoft.com/2018/06/18/tutorial-canary-deployment-for-azure-virtu
 Define the deployment variables used by the subsequent Azure CLI commands
 
 ```bash
-resource_group=vmss-demo-01
+resource_group=[your resource group name]
 location=westus2
-vmss_name=vmss-nginx-01
-user_name=bot6
-storage_account=vmssnginx01storage
+vmss_name=[your vmss name]
+user_name=[your login name]
+storage_account=[your storage account name]
 ```
 
 Define the admin user name and SSH key variables
