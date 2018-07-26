@@ -190,26 +190,24 @@ read -n1 -r -p 'Press any key...' key
 az network lb probe create \
     --resource-group $resource_group \
     --lb-name ${vmss_name}-elb \
-    --name nginx \
+    --name nginx-probe \
     --port 80 \
     --protocol Http \
     --path /
 
 echo
 echo
-echo 'Enable public access to the vmss pool'
-echo
-echo 'Create a load balancer rule to allow public access to the backend nginx instances'
+echo 'Create a load balancer rule'
 echo
 echo 'az network lb rule create \'
 echo '    --resource-group $resource_group \'
 echo '    --lb-name ${vmss_name}-elb \'
-echo '    --name nginx \'
+echo '    --name nginx-rule \'
 echo '    --frontend-port 80 \'
 echo '    --backend-port 80 \'
 echo '    --protocol Tcp \'
 echo '    --backend-pool-name ${vmss_name}-backend \'
-echo '    --probe nginx'
+echo '    --probe nginx-probe'
 read -n1 -r -p 'Press any key...' key
 
 az network lb rule create \
@@ -248,7 +246,6 @@ EOF
 
 az storage blob upload --container-name init --file install_nginx_v2.sh --name install_nginx_v2.sh
 init_script_url="$(az storage blob url --container-name init --name install_nginx_v2.sh --output tsv)"
-
 
 echo
 echo
@@ -289,6 +286,7 @@ echo
 echo
 echo 'Get the vmss first instance ID'
 echo
+echo 'instance_id="$(az vmss list-instances --resource-group $resource_group --name $vmss_name --query [].instanceId --output tsv | head -n1)"'
 read -n1 -r -p 'Press any key...' key
 
 instance_id="$(az vmss list-instances --resource-group $resource_group --name $vmss_name --query '[].instanceId' --output tsv | head -n1)"
@@ -308,6 +306,12 @@ echo
 read -n1 -r -p 'Press any key...' key
 
 az vmss list-instances --resource-group $resource_group --name $vmss_name
+
+echo
+echo
+echo 'curl each the elb to validate'
+echo
+read -n1 -r -p 'Press any key...' key
 
 for i in `seq 1 6`; do
     curl -s $lb_ip | grep title
@@ -329,7 +333,7 @@ echo 'After creating the SSH channel, you can visit the web page through http://
 echo
 read -n1 -r -p 'Press any key...' key
 
-ssh -L localhost:8080:localhost:80 -p $ssh_port $lb_ip
+ssh -L localhost:8080:localhost:80 -p $ssh_port $user_name@$lb_ip
 
 echo
 echo 'Close the SSH channel and upgrade the remaining instances'
@@ -337,3 +341,13 @@ echo
 read -n1 -r -p 'Press any key...' key
 
 az vmss update-instances --resource-group $resource_group --name $vmss_name --instance-ids \*
+
+echo
+echo
+echo 'curl each the elb to validate'
+echo
+read -n1 -r -p 'Press any key...' key
+
+for i in `seq 1 6`; do
+    curl -s $lb_ip | grep title
+done
