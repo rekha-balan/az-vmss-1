@@ -226,6 +226,8 @@ echo 'Verify nginx is running on each instance'
 read -n1 -r -p 'Press any key...' key
 
 lb_ip=$(az network lb show --resource-group "$resource_group" --name "${vmss_name}-elb" --query "frontendIpConfigurations[].publicIpAddress.id" --output tsv | head -n1 | xargs az network public-ip show --query ipAddress --output tsv --ids)
+
+echo
 curl -s "$lb_ip" | grep title
 
 
@@ -309,10 +311,10 @@ az vmss list-instances --resource-group $resource_group --name $vmss_name
 
 echo
 echo
-echo 'curl each the elb to validate'
-echo
+echo 'curl the Load balancer IP address to validate'
 read -n1 -r -p 'Press any key...' key
 
+echo
 for i in `seq 1 6`; do
     curl -s $lb_ip | grep title
 done
@@ -336,7 +338,7 @@ read -n1 -r -p 'Press any key...' key
 ssh -L localhost:8080:localhost:80 -p $ssh_port $user_name@$lb_ip
 
 echo
-echo 'Close the SSH channel and upgrade the remaining instances'
+echo 'Now upgrade the remaining instances'
 echo
 read -n1 -r -p 'Press any key...' key
 
@@ -344,10 +346,10 @@ az vmss update-instances --resource-group $resource_group --name $vmss_name --in
 
 echo
 echo
-echo 'curl each the elb to validate'
-echo
+echo 'curl the Load balancer IP address to validate'
 read -n1 -r -p 'Press any key...' key
 
+echo
 for i in `seq 1 6`; do
     curl -s $lb_ip | grep title
 done
