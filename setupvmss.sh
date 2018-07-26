@@ -39,7 +39,7 @@ az group create --name $resource_group --location $location
 
 echo
 echo
-echo "Create the vmss with three (3) instances using the public Ubuntu LTS image."
+echo "Create the vmss with three (3) instances using the public Ubuntu LTS image. --ssh-key-value $ssh_pubkey"
 echo
 echo 'az vmss create --resource-group $resource_group --name $vmss_name \'
 echo '    --image UbuntuLTS \'
@@ -56,7 +56,7 @@ read -n1 -r -p 'Press any key...' key
 az vmss create --resource-group $resource_group --name $vmss_name \
     --image UbuntuLTS \
     --admin-username $admin_user \
-    --ssh-key-value $ssh_pubkey \
+    --generate-ssh-keys \
     --vm-sku Standard_D2_v3 \
     --instance-count 3 \
     --vnet-name ${vmss_name}-vnet \
