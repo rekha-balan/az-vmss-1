@@ -32,7 +32,7 @@ az group create --name $resource_group --location $location
 
 Create the vmss with three (3) instances using the public Ubuntu LTS image.
 
->**NOTE**: If you have a key pair, either replace --generate-ssh-keys with --ssh-key-value $ssh_pubkey
+>**NOTE**: If you have a key pair, replace --generate-ssh-keys with --ssh-key-value $ssh_pubkey
 
 ```bash
 az vmss create --resource-group $resource_group --name $vmss_name \
