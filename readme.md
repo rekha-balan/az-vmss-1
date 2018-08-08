@@ -9,12 +9,14 @@ https://open.microsoft.com/2018/06/18/tutorial-canary-deployment-for-azure-virtu
 
 Define the deployment variables used by the subsequent Azure CLI commands
 
+>**Important**: A Storage Account name must be globally unique. Note that '-' is not allowed in a storage account name.  Additional naming rules for storage can be found [here](https://docs.microsoft.com/en-us/azure/architecture/best-practices/naming-conventions#storage)
+
 ```bash
-resource_group=[your resource group name]
+resource_group=vmss-us-west2
 location=westus2
-vmss_name=[your vmss name]
-user_name=[your login name]
-storage_account=[your storage account name]
+vmss_name=vmss-nginx-01
+user_name=adminuser
+storage_account=vmssdemo01storage
 ```
 
 Define the admin user name and SSH key variables
@@ -48,8 +50,6 @@ az vmss create --resource-group $resource_group --name $vmss_name \
 ```
 
 ## Deploy nginx to the Virtual Machine Scale Set
-
-A Storage Account is needed to store the init scripts. Note that '-' is not allowed in a storage account name.  Additional naming rules for storage can be found [here](https://docs.microsoft.com/en-us/azure/architecture/best-practices/naming-conventions#storage)
 
 Create the Azure Storage Account and container that will store the scripts used to deploy the application
 

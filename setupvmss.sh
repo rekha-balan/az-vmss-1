@@ -4,17 +4,17 @@ echo
 echo
 echo 'Define the deployment variables used by the subsequent Azure CLI commands'
 echo
-echo 'resource_group=vmss-demo-01'
+echo 'resource_group=vmss-us-west2'
 echo 'location=westus2'
 echo 'vmss_name=vmss-nginx-01'
-echo 'user_name=bot6'
+echo 'user_name=adminuser'
 echo 'storage_account=vmssdemo01storage'
 read -n1 -r -p 'Press any key...' key
 
-resource_group=vmss-demo-01
+resource_group=vmss-us-west2
 location=westus2
 vmss_name=vmss-nginx-01
-user_name=bot6
+user_name=adminuser
 storage_account=vmssdemo01storage
 
 echo

@@ -1,0 +1,4 @@
+{
+  "fileUris": ["https://vmssdemo01storage.blob.core.windows.net/init/install_nginx.sh"],
+  "commandToExecute": "./install_nginx.sh"
+}
