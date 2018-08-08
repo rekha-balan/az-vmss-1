@@ -241,3 +241,9 @@ Close the SSH channel and upgrade the remaining instances
 ```bash
 az vmss update-instances --resource-group $resource_group --name $vmss_name --instance-ids \*
 ```
+
+## Remove the Resource Group
+
+```bash
+az group delete -n $resource_group
+```
