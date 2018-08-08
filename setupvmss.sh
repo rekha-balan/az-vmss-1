@@ -22,6 +22,7 @@ echo
 echo 'Define the admin user name and SSH key variables'
 echo
 echo 'admin_user=$user_name'
+echo
 echo 'ssh_pubkey="$(readlink -f ~/.ssh/id_rsa.pub)"'
 read -n1 -r -p 'Press any key...' key
 
@@ -332,16 +333,16 @@ echo
 echo 'Map the localhost:8080 endpoint to the remote 80 port through the SSH channel'
 echo
 echo 'After creating the SSH channel, you can visit the web page through http://localhost:8080 to see the upgraded instance'
-echo
 read -n1 -r -p 'Press any key...' key
 
+echo
 ssh -L localhost:8080:localhost:80 -p $ssh_port $user_name@$lb_ip
 
 echo
 echo 'Now upgrade the remaining instances'
-echo
 read -n1 -r -p 'Press any key...' key
 
+echo
 az vmss update-instances --resource-group $resource_group --name $vmss_name --instance-ids \*
 
 echo
