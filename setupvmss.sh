@@ -1,21 +1,21 @@
 #!/bin/bash
 
+resource_group=vmss-nginx2-us-west2
+location=westus2
+vmss_name=vmss-nginx-02
+user_name=adminuser
+storage_account=vmssnginx01storage
+
 echo
 echo
 echo 'Define the deployment variables used by the subsequent Azure CLI commands'
 echo
-echo 'resource_group=vmss-us-west2'
-echo 'location=westus2'
-echo 'vmss_name=vmss-nginx-01'
-echo 'user_name=adminuser'
-echo 'storage_account=vmssdemo01storage'
+echo "resource_group=$resource_group"
+echo "location=$location"
+echo "vmss_name=$vmss_name"
+echo "user_name=$user_name"
+echo "storage_account=$storage_account"
 read -n1 -r -p 'Press any key...' key
-
-resource_group=vmss-us-west2
-location=westus2
-vmss_name=vmss-nginx-01
-user_name=adminuser
-storage_account=vmssdemo01storage
 
 echo
 echo
@@ -27,6 +27,7 @@ echo 'ssh_pubkey="$(readlink -f ~/.ssh/id_rsa.pub)"'
 read -n1 -r -p 'Press any key...' key
 
 admin_user=$user_name
+
 ssh_pubkey="$(readlink -f ~/.ssh/id_rsa.pub)"
 
 echo
@@ -93,7 +94,7 @@ az storage container create --name init --public-access container
 
 echo
 echo
-echo 'Create the init script that will be used to install nginx'
+echo 'Create the init script (install_nginx.sh) that will be used to install nginx'
 echo
 echo 'The script will contain "sudo apt-get update" and "sudo apt-get install -y nginx" commands'
 echo
@@ -121,7 +122,7 @@ init_script_url="$(az storage blob url --container-name init --name install_ngin
 
 echo
 echo
-echo 'Create the JSON settings file used by the vmss extension'
+echo 'Create the JSON settings file (script-config.json) used by the vmss extension'
 echo
 echo 'The script will have the url to the init script, and the command needed for execution'
 echo
@@ -221,22 +222,24 @@ az network lb rule create \
     --backend-pool-name ${vmss_name}-backend \
     --probe nginx-probe
 
-echo
-echo
-echo 'Verify nginx is running on each instance'
-read -n1 -r -p 'Press any key...' key
 
 lb_ip=$(az network lb show --resource-group "$resource_group" --name "${vmss_name}-elb" --query "frontendIpConfigurations[].publicIpAddress.id" --output tsv | head -n1 | xargs az network public-ip show --query ipAddress --output tsv --ids)
 
 echo
-curl -s "$lb_ip" | grep title
+echo
+echo "Curl the load balancer IP to verify nginx is running"
+echo
+echo "curl -s $lb_ip | grep title"
+read -n1 -r -p 'Press any key...' key
 
+echo
+curl -s "$lb_ip" | grep title
 
 echo
 echo
 echo 'Initiate a rolling update to the vmss'
 echo
-echo 'Create the new init script that will be used to modify nginx, upload the script to the Storage Account'
+echo 'Create the new init script (install_nginx_v2.sh) that will be used to modify nginx, upload the script to the Storage Account'
 read -n1 -r -p 'Press any key...' key
 
 cat <<EOF >install_nginx_v2.sh
@@ -248,11 +251,12 @@ sudo sed -i -e 's/Welcome to nginx/Welcome to nginx on Azure vmss/' /var/www/htm
 EOF
 
 az storage blob upload --container-name init --file install_nginx_v2.sh --name install_nginx_v2.sh
+
 init_script_url="$(az storage blob url --container-name init --name install_nginx_v2.sh --output tsv)"
 
 echo
 echo
-echo 'Create the JSON settings file used by the new vmss extension'
+echo 'Create the JSON settings file (script-config_v2.json) used by the new vmss extension'
 echo
 read -n1 -r -p 'Press any key...' key
 
@@ -267,6 +271,13 @@ echo
 echo
 echo 'Deploy the new script extension to the vmss'
 echo
+echo 'az vmss extension set \'
+echo '    --publisher Microsoft.Azure.Extensions \'
+echo '    --version 2.0 \'
+echo '    --name CustomScript \'
+echo '    --resource-group $resource_group \'
+echo '    --vmss-name $vmss_name \'
+echo '    --settings @script-config_v2.json'
 read -n1 -r -p 'Press any key...' key
 
 az vmss extension set \
@@ -281,6 +292,7 @@ echo
 echo
 echo 'Show the current status of the vmss'
 echo
+echo 'az vmss list-instances --name $vmss_name --resource-group $resource_group'
 read -n1 -r -p 'Press any key...' key
 
 az vmss list-instances --name $vmss_name --resource-group $resource_group
@@ -293,11 +305,13 @@ echo 'instance_id="$(az vmss list-instances --resource-group $resource_group --n
 read -n1 -r -p 'Press any key...' key
 
 instance_id="$(az vmss list-instances --resource-group $resource_group --name $vmss_name --query '[].instanceId' --output tsv | head -n1)"
+echo "first instance ID: $instance_id"
 
 echo
 echo
 echo 'Upgrade the first instance of the vmss to the latest version'
 echo
+echo 'az vmss update-instances --resource-group "$resource_group" --name "$vmss_name" --instance-ids "$instance_id"'
 read -n1 -r -p 'Press any key...' key
 
 az vmss update-instances --resource-group "$resource_group" --name "$vmss_name" --instance-ids "$instance_id"
@@ -306,6 +320,7 @@ echo
 echo
 echo 'Verify the first instance has been upgraded'
 echo
+echo 'az vmss list-instances --resource-group $resource_group --name $vmss_name'
 read -n1 -r -p 'Press any key...' key
 
 az vmss list-instances --resource-group $resource_group --name $vmss_name
@@ -313,6 +328,9 @@ az vmss list-instances --resource-group $resource_group --name $vmss_name
 echo
 echo
 echo 'curl the Load balancer IP address to validate'
+echo 'for i in `seq 1 6`; do'
+echo '    curl -s $lb_ip | grep title'
+echo 'done'
 read -n1 -r -p 'Press any key...' key
 
 echo
@@ -324,6 +342,7 @@ echo
 echo
 echo 'Obtain the NAT SSH port for the updated instance'
 echo
+echo 'ssh_port="$(az network lb inbound-nat-rule show --resource-group $resource_group --lb-name ${vmss_name}-elb --name ${vmss_name}-elbNatPool.${instance_id} --query frontendPort --output tsv)"'
 read -n1 -r -p 'Press any key...' key
 
 ssh_port="$(az network lb inbound-nat-rule show --resource-group $resource_group --lb-name ${vmss_name}-elb --name ${vmss_name}-elbNatPool.${instance_id} --query frontendPort --output tsv)"
@@ -333,6 +352,8 @@ echo
 echo 'Map the localhost:8080 endpoint to the remote 80 port through the SSH channel'
 echo
 echo 'After creating the SSH channel, you can visit the web page through http://localhost:8080 to see the upgraded instance'
+echo
+echo 'ssh -L localhost:8080:localhost:80 -p $ssh_port $user_name@$lb_ip'
 read -n1 -r -p 'Press any key...' key
 
 echo
@@ -340,6 +361,8 @@ ssh -L localhost:8080:localhost:80 -p $ssh_port $user_name@$lb_ip
 
 echo
 echo 'Now upgrade the remaining instances'
+echo
+echo 'az vmss update-instances --resource-group $resource_group --name $vmss_name --instance-ids \*'
 read -n1 -r -p 'Press any key...' key
 
 echo
@@ -348,6 +371,10 @@ az vmss update-instances --resource-group $resource_group --name $vmss_name --in
 echo
 echo
 echo 'curl the Load balancer IP address to validate'
+echo
+echo 'for i in `seq 1 6`; do'
+echo '    curl -s $lb_ip | grep title'
+echo 'done'
 read -n1 -r -p 'Press any key...' key
 
 echo

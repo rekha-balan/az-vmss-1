@@ -5,6 +5,56 @@ Tutorial: Canary Deployment for Azure Virtual Machine Scale Sets
 by Menghua Xiao
 https://open.microsoft.com/2018/06/18/tutorial-canary-deployment-for-azure-virtual-machine-scale-sets/
 
+## Deployment Quickstart
+
+git clone and update
+
+```bash
+git clone https://github.com/bot6/az-vmss
+
+git fetch --all
+
+git reset --hard origin/master
+```
+
+Allowing the deployment scripts to execute
+
+```bash
+cd az-vm
+
+chmod +x setupvmss.sh
+
+chmod +x cleanup.sh
+```
+
+Configure the Azure CLI (set output to table)
+
+```bash
+az account list
+
+az account set --subscription 00000000-0000-0000-0000-000000000000
+
+az account show
+
+az configure
+```
+
+Running the deployment
+
+```bash
+./setupvmss.sh
+```
+
+Delete the Azure deployment and git repo
+
+```bash
+./cleanup.sh
+
+cd ..
+
+rm -rf az-vmss
+```
+
 ## Deploy the Virtual Machine Scale Set
 
 Define the deployment variables used by the subsequent Azure CLI commands
