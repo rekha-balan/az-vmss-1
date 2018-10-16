@@ -1,4 +1,4 @@
-# Azure Virtual Machine Scale Set (vmss) Demo
+# Azure Virtual Machine Scale Set (vmss) Deployment
 
 Content based on
 Tutorial: Canary Deployment for Azure Virtual Machine Scale Sets
