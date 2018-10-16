@@ -7,7 +7,7 @@ https://open.microsoft.com/2018/06/18/tutorial-canary-deployment-for-azure-virtu
 
 ## Deployment Quickstart
 
-git clone and update
+git commands
 
 ```bash
 git clone https://github.com/bot6/az-vmss
@@ -17,7 +17,7 @@ git fetch --all
 git reset --hard origin/master
 ```
 
-Allowing the deployment scripts to execute
+Linux commands
 
 ```bash
 cd az-vm
@@ -27,7 +27,7 @@ chmod +x setupvmss.sh
 chmod +x cleanup.sh
 ```
 
-Configure the Azure CLI (set output to table)
+Azure CLI commands
 
 ```bash
 az account list
@@ -39,18 +39,16 @@ az account show
 az configure
 ```
 
-Running the deployment
+Script deployment commands
 
 ```bash
 ./setupvmss.sh
 ```
 
-Delete the Azure deployment and git repo
+Cleanup commands
 
 ```bash
 ./cleanup.sh
-
-cd ..
 
 rm -rf az-vmss
 ```
