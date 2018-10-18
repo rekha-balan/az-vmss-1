@@ -1,10 +1,10 @@
 #!/bin/bash
 
-resource_group=vmss-nginx2-us-west2
-location=westus2
-vmss_name=vmss-nginx-02
+resource_group=vmss-app-us-east
+location=eastus
+vmss_name=vmss-app-02
 user_name=adminuser
-storage_account=vmssnginx01storage
+storage_account=vmssapp02storage
 
 echo
 echo
@@ -336,6 +336,10 @@ read -n1 -r -p 'Press any key...' key
 echo
 for i in `seq 1 6`; do
     curl -s $lb_ip | grep title
+done
+
+for i in `seq 1 6`; do
+    curl -s http://svc.mtcms.trafficmanager.net/ | grep title
 done
 
 echo

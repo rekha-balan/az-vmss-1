@@ -1,4 +1,4 @@
 {
-  "fileUris": ["https://vmssnginx01storage.blob.core.windows.net/init/install_nginx.sh"],
+  "fileUris": ["https://vmssapp02storage.blob.core.windows.net/init/install_nginx.sh"],
   "commandToExecute": "./install_nginx.sh"
 }
